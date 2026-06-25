@@ -7,11 +7,11 @@ import { CartItemRow } from '@/features/cart/CartItemRow';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { ErrorState } from '@/components/shared/ErrorState';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { OrderSummary } from '@/components/shared/OrderSummary';
 import { buttonVariants } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CartPage() {
   const { data: cart, isLoading: isCartLoading, isError: isCartError } = useCartQuery();
@@ -65,8 +65,15 @@ export default function CartPage() {
     return { item, product };
   }).filter(row => row.product !== undefined) as { item: any, product: any }[];
 
+  const summaryItems = cartItemsWithProducts.map(({ item, product }) => ({
+    name: product.name,
+    quantity: item.quantity,
+    price: product.price,
+    image: product.image
+  }));
+
   return (
-    <div className="flex flex-col gap-8 max-w-5xl mx-auto w-full">
+    <div className="flex flex-col gap-8 max-w-[1400px] mx-auto w-full pb-12">
       <div className="pb-4 border-b border-border/50">
         <h1 className="text-4xl font-extrabold tracking-tight">Your Cart</h1>
         <p className="text-lg text-muted-foreground mt-2">
@@ -74,44 +81,42 @@ export default function CartPage() {
         </p>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm text-card-foreground shadow-sm overflow-hidden"
-      >
-        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_auto] gap-4 bg-muted/30 p-6 border-b border-border/50 font-semibold text-xs uppercase tracking-wider text-muted-foreground">
-          <div>Product</div>
-          <div>Price</div>
-          <div>Quantity</div>
-          <div className="text-right pr-6">Total</div>
+      <div className="grid lg:grid-cols-[1.5fr_1fr] xl:grid-cols-[2fr_1fr] gap-8 lg:gap-12 items-start">
+        {/* Left Column: Cart Items */}
+        <div className="flex flex-col gap-4">
+          <AnimatePresence mode="popLayout">
+            {cartItemsWithProducts.map(({ item, product }) => (
+              <CartItemRow key={item.productId} item={item} product={product} />
+            ))}
+          </AnimatePresence>
         </div>
 
-        <div className="p-4 md:p-6 flex flex-col gap-4">
-          {cartItemsWithProducts.map(({ item, product }) => (
-            <CartItemRow key={item.productId} item={item} product={product} />
-          ))}
-        </div>
-
-        <div className="bg-muted/10 p-6 md:p-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link href="/" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full md:w-auto hidden md:inline-flex rounded-xl")}>
-            Continue Shopping
+        {/* Right Column: Order Summary Sidebar */}
+        <div className="flex flex-col gap-6">
+          <OrderSummary items={summaryItems} subtotal={subtotal} />
+          
+          <Link 
+            href="/checkout" 
+            className={cn(
+              buttonVariants({ size: "lg" }), 
+              "w-full text-lg px-8 h-14 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all font-bold group"
+            )}
+          >
+            Proceed to Checkout
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
           
-          <div className="flex flex-col items-end gap-4 w-full md:w-auto">
-            <div className="flex items-center gap-6 text-lg">
-              <span className="text-muted-foreground font-medium">Subtotal:</span>
-              <span className="font-extrabold text-3xl tracking-tight">${subtotal.toFixed(2)}</span>
-            </div>
-            <p className="text-sm text-muted-foreground mb-2">
-              Taxes and shipping calculated at checkout.
-            </p>
-            <Link href="/checkout" className={cn(buttonVariants({ size: "lg" }), "w-full md:w-auto text-lg px-10 rounded-xl shadow-lg shadow-primary/20")}>
-              Proceed to Checkout
-            </Link>
-          </div>
+          <Link 
+            href="/" 
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }), 
+              "w-full rounded-xl bg-card/50 backdrop-blur-sm border-border/50 hover:bg-muted/50"
+            )}
+          >
+            Continue Shopping
+          </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

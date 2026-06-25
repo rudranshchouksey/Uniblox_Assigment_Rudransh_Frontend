@@ -3,9 +3,9 @@
 import { CartItem } from '@/types/cart';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
-import { QuantitySelector } from '@/components/shared/QuantitySelector';
+import { Trash2, Minus, Plus } from 'lucide-react';
 import { useUpdateCartItemMutation, useRemoveCartItemMutation } from './useCart';
+import { motion } from 'framer-motion';
 
 interface CartItemRowProps {
   item: CartItem;
@@ -35,38 +35,68 @@ export function CartItemRow({ item, product }: CartItemRowProps) {
   const isUpdating = updateMutation.isPending || removeMutation.isPending;
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_auto] gap-4 items-center py-4 border-b ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}>
-      <div className="flex flex-col">
-        <span className="font-semibold">{product.name}</span>
-        <span className="text-sm text-muted-foreground md:hidden">${product.price.toFixed(2)}</span>
-      </div>
-      
-      <div className="hidden md:block">
-        ${product.price.toFixed(2)}
-      </div>
-
-      <div className="flex items-center">
-        <QuantitySelector 
-          quantity={item.quantity}
-          onDecrease={handleDecrease}
-          onIncrease={handleIncrease}
-          max={product.stock}
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      layout
+      className={`group flex flex-col md:flex-row gap-6 items-start md:items-center p-4 rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md hover:border-primary/20 transition-all ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
+    >
+      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-muted/30 shrink-0 border border-border/50">
+        <img 
+          src={product.image || `https://picsum.photos/seed/${product.id}/400/400`} 
+          alt={product.name} 
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
       </div>
 
-      <div className="flex items-center justify-between md:justify-end gap-6">
-        <span className="font-bold">
-          ${(product.price * item.quantity).toFixed(2)}
-        </span>
-        <Button 
-          variant="ghost" 
-          size="icon-sm" 
-          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          onClick={handleRemove}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+      <div className="flex-1 flex flex-col min-w-0">
+        <h3 className="font-bold text-lg text-foreground truncate group-hover:text-primary transition-colors">{product.name}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-1 mb-2">{product.description}</p>
+        <div className="text-sm font-semibold bg-muted/50 w-fit px-2 py-1 rounded-md">
+          ${product.price.toFixed(2)}
+        </div>
       </div>
-    </div>
+
+      <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+        <div className="flex items-center rounded-xl border border-border/50 bg-muted/20 overflow-hidden shadow-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-none hover:bg-muted/50"
+            onClick={handleDecrease}
+            disabled={item.quantity <= 1}
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <span className="w-10 text-center text-sm font-semibold">
+            {item.quantity}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-none hover:bg-muted/50"
+            onClick={handleIncrease}
+            disabled={item.quantity >= product.stock}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <span className="font-bold text-lg w-24 text-right">
+            ${(product.price * item.quantity).toFixed(2)}
+          </span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0"
+            onClick={handleRemove}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </motion.div>
   );
 }

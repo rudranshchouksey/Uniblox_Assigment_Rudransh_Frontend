@@ -92,3 +92,11 @@ export const useRemoveCartItemMutation = () => {
     },
   });
 };
+
+import { validateDiscount } from '@/services/checkout.service';
+
+export const useValidateDiscountMutation = () => {
+  return useMutation({
+    mutationFn: validateDiscount,
+  });
+};
