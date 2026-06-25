@@ -14,8 +14,8 @@ import { Label } from '@/components/ui/label';
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
-  price: z.number({ invalid_type_error: 'Price must be a valid number' }).positive('Price must be greater than zero'),
-  stock: z.number({ invalid_type_error: 'Stock must be a valid number' }).int().nonnegative('Stock cannot be negative'),
+  price: z.number({ message: 'Price must be a valid number' }).positive('Price must be greater than zero'),
+  stock: z.number({ message: 'Stock must be a valid number' }).int().nonnegative('Stock cannot be negative'),
   category: z.string().optional(),
   image: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
