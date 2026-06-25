@@ -46,4 +46,14 @@ export const processCheckout = async (data: { customerId: string; discountCode?:
   return response.data.data;
 };
 
+export const getAdminStats = async () => {
+  const response = await api.get('/admin/stats');
+  return response.data.data;
+};
+
+export const generateAdminCoupon = async () => {
+  const response = await api.post('/admin/discounts/generate');
+  return response.data.data;
+};
+
 export default api;
