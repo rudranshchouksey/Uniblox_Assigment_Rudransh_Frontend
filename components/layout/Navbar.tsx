@@ -20,23 +20,23 @@ export function Navbar() {
         <MobileNav />
         
         <div className="flex items-center gap-6 md:gap-8 flex-1">
-          <Link href="/" className="flex items-center gap-2 font-bold tracking-tighter text-lg">
-            <div className="bg-primary text-primary-foreground p-1.5 rounded-xl shadow-md shadow-primary/20">
+          <Link href="/" className="flex items-center gap-2.5 font-bold tracking-tight text-xl group">
+            <div className="bg-primary text-primary-foreground p-1.5 rounded-xl shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-all duration-300">
               <Package2 className="h-5 w-5" />
             </div>
             <span className="hidden md:inline-block">Acme SaaS</span>
           </Link>
           
-          <div className="hidden md:flex relative flex-1 max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="hidden md:flex relative flex-1 max-w-md ml-4">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <svg className="h-4 w-4 text-muted-foreground/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input 
               type="text" 
               placeholder="Search products, orders, and customers..." 
-              className="w-full bg-muted/50 border border-border/50 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/70"
+              className="w-full bg-muted/40 border border-border/40 rounded-2xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-muted-foreground/60 font-medium"
             />
           </div>
         </div>
