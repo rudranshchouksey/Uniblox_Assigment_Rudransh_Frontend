@@ -7,6 +7,23 @@ import { ErrorState } from '@/components/shared/ErrorState';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { PackageX } from 'lucide-react';
 
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+};
+
 export default function Home() {
   const { data: products, isLoading, isError } = useProductsQuery();
 
@@ -40,19 +57,26 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-        <p className="text-muted-foreground mt-2">
+    <div className="flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
+      <div className="pb-4 border-b border-border/50">
+        <h1 className="text-4xl font-extrabold tracking-tight">Products</h1>
+        <p className="text-lg text-muted-foreground mt-2">
           Browse our latest collection of premium items.
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      >
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <motion.div key={product.id} variants={item}>
+            <ProductCard product={product} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

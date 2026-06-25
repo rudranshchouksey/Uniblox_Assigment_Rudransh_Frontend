@@ -9,14 +9,16 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, subtitle, icon }: StatsCardProps) {
   return (
-    <Card>
+    <Card className="rounded-3xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
+        <CardTitle className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</CardTitle>
+        <div className="bg-primary/10 text-primary p-2 rounded-xl">
+          {icon}
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{subtitle}</p>
+        <div className="text-3xl font-extrabold tracking-tight mt-2">{value}</div>
+        <p className="text-sm font-medium text-muted-foreground mt-1">{subtitle}</p>
       </CardContent>
     </Card>
   );

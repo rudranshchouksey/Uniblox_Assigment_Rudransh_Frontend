@@ -12,6 +12,8 @@ interface ProductCardProps {
   product: Product;
 }
 
+import { motion } from 'framer-motion';
+
 export function ProductCard({ product }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const addToCartMutation = useAddToCartMutation();
@@ -39,17 +41,21 @@ export function ProductCard({ product }: ProductCardProps) {
   const imageUrl = `https://picsum.photos/seed/${product.id}/400/400`;
 
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md">
-      
+    <motion.div 
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
+      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card text-card-foreground shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-shadow"
+    >
       {/* Image Container with Hover Scale */}
-      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
         <Image
           src={imageUrl}
           alt={product.name}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
       <div className="p-6 pb-4">
@@ -60,10 +66,10 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-xl font-bold">
+          <span className="text-xl font-bold tracking-tight">
             ${product.price.toFixed(2)}
           </span>
-          <span className="text-xs text-muted-foreground" aria-live="polite">
+          <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded-md" aria-live="polite">
             {product.stock} in stock
           </span>
         </div>
@@ -71,11 +77,11 @@ export function ProductCard({ product }: ProductCardProps) {
       
       <div className="p-6 pt-0 mt-auto flex flex-col gap-4">
         <div className="flex items-center gap-4 w-full">
-          <div className="flex items-center rounded-md border border-input">
+          <div className="flex items-center rounded-xl border border-border/50 bg-muted/20 overflow-hidden">
             <Button
               variant="ghost"
               size="icon-sm"
-              className="h-8 w-8 rounded-none border-r border-input"
+              className="h-9 w-9 rounded-none hover:bg-muted/50"
               onClick={handleDecrease}
               disabled={quantity <= 1}
               aria-label="Decrease quantity"
@@ -88,7 +94,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="h-8 w-8 rounded-none border-l border-input"
+              className="h-9 w-9 rounded-none hover:bg-muted/50"
               onClick={handleIncrease}
               disabled={quantity >= product.stock}
               aria-label="Increase quantity"
@@ -98,7 +104,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
           
           <Button
-            className="flex-1"
+            className="flex-1 rounded-xl font-semibold shadow-md shadow-primary/20"
             onClick={handleAddToCart}
             disabled={addToCartMutation.isPending || product.stock === 0}
             aria-label={`Add ${quantity} ${product.name} to cart`}
@@ -114,6 +120,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

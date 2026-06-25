@@ -16,14 +16,18 @@ export function LoadingState({ title, description, type = 'grid' }: LoadingState
 
       {type === 'grid' && (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm h-[320px] p-6">
-              <Skeleton className="h-6 w-3/4 mb-4" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-2/3 mb-6" />
-              <div className="mt-auto space-y-4">
-                <Skeleton className="h-6 w-1/3" />
-                <Skeleton className="h-10 w-full" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex flex-col rounded-2xl border border-border/50 bg-card shadow-sm h-[420px] overflow-hidden">
+              <Skeleton className="w-full aspect-square rounded-none bg-muted/50" />
+              <div className="p-6 flex flex-col flex-1">
+                <Skeleton className="h-5 w-3/4 mb-3" />
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-2/3 mb-6" />
+                <div className="mt-auto flex justify-between items-center mb-6">
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-5 w-20" />
+                </div>
+                <Skeleton className="h-10 w-full rounded-xl" />
               </div>
             </div>
           ))}
