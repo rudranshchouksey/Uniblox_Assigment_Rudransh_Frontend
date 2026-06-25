@@ -11,4 +11,5 @@ export interface AdminStats {
   totalRevenue: number;
   totalDiscountGiven: number;
   discountCodes: DiscountCode[];
+  orders: any[]; // we can use any[] or import Order type
 }
