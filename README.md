@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+This frontend is 100% environment-driven. Before running or deploying, copy the template and configure the API base URL:
+
+```bash
+cp .env.example .env.local
+```
+
+Configuring `.env.local` is the **only required step** before deployment. Ensure `NEXT_PUBLIC_API_BASE_URL` points to your backend.
+
 ## Getting Started
 
 First, run the development server:
