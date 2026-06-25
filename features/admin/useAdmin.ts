@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAdminStats, generateAdminCoupon } from '@/services/api';
+import { getAdminStats, generateAdminCoupon } from '@/services/admin.service';
 import { AdminStats, DiscountCode } from '@/types/admin';
 import { toast } from 'sonner';
 

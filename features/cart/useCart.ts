@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCart, addToCart, updateCartItem, removeCartItem } from '@/services/api';
+import { getCart, addToCart, updateCartItem, removeCartItem } from '@/services/cart.service';
 import { toast } from 'sonner';
 import { Cart } from '@/types/cart';
 

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { processCheckout } from '@/services/api';
+import { processCheckout } from '@/services/checkout.service';
 import { toast } from 'sonner';
 import { CUSTOMER_ID } from '../cart/useCart';
 import { Order } from '@/types/order';

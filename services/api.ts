@@ -1,6 +1,4 @@
-import axios from 'axios';
-import { Product } from '@/types/product';
-import { Cart } from '@/types/cart';
+import axios, { AxiosError } from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -11,49 +9,20 @@ export const api = axios.create({
   },
 });
 
-export const getProducts = async (): Promise<Product[]> => {
-  const response = await api.get('/products');
-  return response.data.data;
-};
-
-export const getCart = async (customerId: string): Promise<Cart> => {
-  const response = await api.get(`/cart/${customerId}`);
-  return response.data.data;
-};
-
-export const addToCart = async (data: { customerId: string; productId: string; quantity: number }): Promise<Cart> => {
-  const response = await api.post('/cart/items', data);
-  return response.data.data;
-};
-
-export const updateCartItem = async (data: { customerId: string; productId: string; quantity: number }): Promise<Cart> => {
-  const response = await api.patch(`/cart/items/${data.productId}`, {
-    customerId: data.customerId,
-    quantity: data.quantity,
-  });
-  return response.data.data;
-};
-
-export const removeCartItem = async (data: { customerId: string; productId: string }): Promise<Cart> => {
-  const response = await api.delete(`/cart/items/${data.productId}`, {
-    data: { customerId: data.customerId },
-  });
-  return response.data.data;
-};
-
-export const processCheckout = async (data: { customerId: string; discountCode?: string }) => {
-  const response = await api.post('/checkout', data);
-  return response.data.data;
-};
-
-export const getAdminStats = async () => {
-  const response = await api.get('/admin/stats');
-  return response.data.data;
-};
-
-export const generateAdminCoupon = async () => {
-  const response = await api.post('/admin/discounts/generate');
-  return response.data.data;
-};
+// Add a response interceptor for global error handling
+api.interceptors.response.use(
+  (response) => {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    return response;
+  },
+  (error: AxiosError) => {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    console.error('API Error Response:', error.response?.data || error.message);
+    
+    // We could trigger global toasts or generic fallbacks here if we wanted
+    // For now, simply reject the promise to let the specific service or hook handle it
+    return Promise.reject(error);
+  }
+);
 
 export default api;
