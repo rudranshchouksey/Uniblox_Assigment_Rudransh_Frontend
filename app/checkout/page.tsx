@@ -175,7 +175,7 @@ export default function CheckoutPage() {
                   {...form.register('customerId')}
                 />
                 {form.formState.errors.customerId && (
-                  <p className="text-sm font-medium text-destructive">
+                  <p role="alert" className="text-sm font-medium text-destructive animate-in fade-in slide-in-from-top-1">
                     {form.formState.errors.customerId.message}
                   </p>
                 )}

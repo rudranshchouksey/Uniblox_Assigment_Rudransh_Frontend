@@ -17,8 +17,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "E-Commerce App",
-  description: "E-Commerce frontend application",
+  title: {
+    template: '%s | E-Commerce Next',
+    default: 'Premium E-Commerce Platform | Next.js 15',
+  },
+  description: 'A modern, responsive e-commerce experience built with Next.js 15, Tailwind CSS, and shadcn/ui.',
+  openGraph: {
+    title: 'Premium E-Commerce Platform',
+    description: 'A modern, responsive e-commerce experience built with Next.js 15.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({

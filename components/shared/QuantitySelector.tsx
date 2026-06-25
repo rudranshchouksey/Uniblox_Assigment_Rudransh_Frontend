@@ -28,10 +28,11 @@ export function QuantitySelector({
         className="h-8 w-8 rounded-none border-r border-input"
         onClick={onDecrease}
         disabled={disabled || quantity <= min}
+        aria-label="Decrease quantity"
       >
         <Minus className="h-3 w-3" />
       </Button>
-      <span className="w-8 text-center text-sm font-medium">
+      <span className="w-8 text-center text-sm font-medium" aria-live="polite">
         {quantity}
       </span>
       <Button
@@ -40,6 +41,7 @@ export function QuantitySelector({
         className="h-8 w-8 rounded-none border-l border-input"
         onClick={onIncrease}
         disabled={disabled || quantity >= max}
+        aria-label="Increase quantity"
       >
         <Plus className="h-3 w-3" />
       </Button>

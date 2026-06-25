@@ -32,10 +32,10 @@ export function Navbar() {
           <Link 
             href="/cart" 
             className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative")}
+            aria-label={`Shopping cart with ${cartItemCount} items`}
           >
             <ShoppingCart className="h-5 w-5" />
             <CartBadge itemCount={cartItemCount} />
-            <span className="sr-only">Cart</span>
           </Link>
         </div>
       </div>

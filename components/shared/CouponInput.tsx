@@ -20,7 +20,7 @@ export function CouponInput({ id, label, placeholder, registration, error }: Cou
         {...registration}
       />
       {error && (
-        <p className="text-sm font-medium text-destructive">
+        <p role="alert" className="text-sm font-medium text-destructive animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}
