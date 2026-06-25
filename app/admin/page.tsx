@@ -1,9 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useMemo } from 'react';
-import { useAdminStatsQuery, useGenerateCouponMutation } from '@/features/admin/useAdmin';
-import { DiscountCode } from '@/types/admin';
+import { useMemo } from 'react';
+import { useAdminStatsQuery } from '@/features/admin/useAdmin';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { ErrorState } from '@/components/shared/ErrorState';
 import { Button } from '@/components/ui/button';
@@ -16,17 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { ProductManagement } from '@/components/admin/ProductManagement';
+import { CouponManagement } from '@/components/admin/CouponManagement';
 import { 
-  CreditCard, DollarSign, Package, Tag, Copy, CheckCircle2, 
-  TrendingUp, Activity, Plus, ShoppingBag, Eye 
+  DollarSign, Package, Tag, 
+  TrendingUp, Activity, Plus, ShoppingBag 
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
@@ -59,29 +52,6 @@ function KpiCard({ title, value, icon, trend, trendLabel }: { title: string, val
 
 export default function AdminPage() {
   const { data: stats, isLoading, isError } = useAdminStatsQuery();
-  const generateCouponMutation = useGenerateCouponMutation();
-
-  const [generatedCoupon, setGeneratedCoupon] = useState<DiscountCode | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const handleGenerate = () => {
-    generateCouponMutation.mutate(undefined, {
-      onSuccess: (data) => {
-        setGeneratedCoupon(data);
-        setIsModalOpen(true);
-        setCopied(false);
-      }
-    });
-  };
-
-  const copyToClipboard = () => {
-    if (generatedCoupon) {
-      navigator.clipboard.writeText(generatedCoupon.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   // Mock time-series data based on raw orders if they exist
   // We'll group the last 7 days of revenue
@@ -114,7 +84,7 @@ export default function AdminPage() {
   }
 
   const averageOrderValue = stats.totalOrders > 0 ? (stats.totalRevenue / stats.totalOrders).toFixed(2) : '0.00';
-  const activeCoupons = stats.discountCodes.filter(c => !c.used).length;
+  const activeCoupons = stats.discountCodes.filter(c => c.status === 'ACTIVE').length;
 
   return (
     <div className="flex flex-col gap-10 w-full pb-16 max-w-[1600px] mx-auto">
@@ -129,13 +99,6 @@ export default function AdminPage() {
         <div className="flex items-center gap-3 w-full md:w-auto">
           <Button variant="outline" className="rounded-xl h-12 px-4 shadow-sm border-border/50 w-full md:w-auto">
             <Plus className="w-4 h-4 mr-2" /> New Product
-          </Button>
-          <Button 
-            onClick={handleGenerate} 
-            disabled={generateCouponMutation.isPending}
-            className="rounded-xl h-12 px-6 shadow-xl shadow-primary/20 font-bold w-full md:w-auto"
-          >
-            {generateCouponMutation.isPending ? 'Generating...' : <><Tag className="w-4 h-4 mr-2" /> Generate Coupon</>}
           </Button>
         </div>
       </div>
@@ -215,7 +178,7 @@ export default function AdminPage() {
                 <RechartsTooltip 
                   contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                   itemStyle={{ color: 'hsl(var(--foreground))', fontWeight: 'bold' }}
-                  formatter={(value: number) => [`$${value.toFixed(2)}`, 'Revenue']}
+                  formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Revenue']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
@@ -247,7 +210,7 @@ export default function AdminPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="grid lg:grid-cols-2 gap-6"
+        className="grid gap-6"
       >
         {/* Recent Orders Table */}
         <div className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden flex flex-col">
@@ -288,51 +251,15 @@ export default function AdminPage() {
             </Table>
           </div>
         </div>
+      </motion.div>
 
-        {/* Coupons Table */}
-        <div className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-border/50 flex justify-between items-center bg-muted/10">
-            <h2 className="text-xl font-bold tracking-tight">Coupon Management</h2>
-          </div>
-          <div className="overflow-auto flex-1 max-h-[400px] custom-scrollbar">
-            <Table>
-              <TableHeader className="sticky top-0 bg-card z-10 shadow-sm">
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-semibold text-xs uppercase tracking-wider">Code</TableHead>
-                  <TableHead className="font-semibold text-xs uppercase tracking-wider">Discount</TableHead>
-                  <TableHead className="font-semibold text-xs uppercase tracking-wider">Status</TableHead>
-                  <TableHead className="text-right font-semibold text-xs uppercase tracking-wider">Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stats.discountCodes.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-32 text-center text-muted-foreground font-medium">
-                      No discount codes generated yet.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  stats.discountCodes.map((code) => (
-                    <TableRow key={code.code} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-mono font-bold text-sm">{code.code}</TableCell>
-                      <TableCell className="font-medium text-green-500">{code.percentage}% OFF</TableCell>
-                      <TableCell>
-                        {code.used ? (
-                          <Badge variant="secondary" className="rounded-md opacity-70">Used</Badge>
-                        ) : (
-                          <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 rounded-md">Active</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right text-xs text-muted-foreground font-medium">
-                        {format(new Date(code.generatedAt), 'MMM dd, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+      {/* Coupon Management Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.25 }}
+      >
+        <CouponManagement />
       </motion.div>
 
       {/* Product Management Section */}
@@ -343,32 +270,6 @@ export default function AdminPage() {
       >
         <ProductManagement />
       </motion.div>
-
-      {/* Generate Coupon Modal */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md text-center flex flex-col items-center p-8 bg-card/95 backdrop-blur-xl border-border/50 shadow-2xl">
-          <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-8 h-8 text-green-500" />
-          </div>
-          <DialogHeader>
-            <DialogTitle className="text-3xl font-extrabold text-center tracking-tight">Coupon Generated</DialogTitle>
-            <DialogDescription className="text-center text-base mt-2 text-muted-foreground">
-              Share this code with your customers for {generatedCoupon?.percentage}% off their order.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center space-x-3 mt-8 p-4 bg-muted/50 rounded-2xl w-full border border-border/50 shadow-inner">
-            <code className="text-2xl font-mono font-black tracking-widest flex-1 text-center select-all text-primary">
-              {generatedCoupon?.code}
-            </code>
-            <Button size="icon" variant="outline" onClick={copyToClipboard} className="shrink-0 h-12 w-12 rounded-xl border-border/50 hover:bg-muted">
-              {copied ? <CheckCircle2 className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
-            </Button>
-          </div>
-          <Button className="w-full mt-8 h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20" onClick={() => setIsModalOpen(false)}>
-            Close
-          </Button>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

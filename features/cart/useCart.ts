@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCart, addToCart, updateCartItem, removeCartItem } from '@/services/cart.service';
+import { validateDiscount } from '@/services/checkout.service';
 import { toast } from 'sonner';
 import { Cart } from '@/types/cart';
 
@@ -92,8 +93,6 @@ export const useRemoveCartItemMutation = () => {
     },
   });
 };
-
-import { validateDiscount } from '@/services/checkout.service';
 
 export const useValidateDiscountMutation = () => {
   return useMutation({

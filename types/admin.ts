@@ -1,8 +1,13 @@
+export type DiscountStatus = 'ACTIVE' | 'USED' | 'EXPIRED' | 'DISABLED';
+
 export interface DiscountCode {
   code: string;
   percentage: number;
-  used: boolean;
+  status: DiscountStatus;
   generatedAt: string;
+  expiryDate?: string;
+  usageCount: number;
+  usageLimit?: number;
 }
 
 export interface AdminStats {

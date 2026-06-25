@@ -51,22 +51,20 @@ export function ProductToolbar({
       <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-muted-foreground hidden sm:block" />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={(val) => { if (val) setSelectedCategory(val); }}>
             <SelectTrigger className="w-[140px] h-11 rounded-xl bg-muted/50 border-transparent">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-border/50">
               <SelectItem value="All">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
+              {categories.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <Select value={sortBy} onValueChange={setSortBy}>
+        <Select value={sortBy} onValueChange={(val) => { if (val) setSortBy(val); }}>
           <SelectTrigger className="w-[160px] h-11 rounded-xl bg-muted/50 border-transparent">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
