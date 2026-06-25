@@ -4,6 +4,8 @@ export interface CartItem {
 }
 
 export interface Cart {
-  customerId: string;
+  id: string;
+  userId: string;
   items: CartItem[];
+  discountCode?: string;
 }

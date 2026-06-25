@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCart, addToCart } from '@/services/api';
+import { getCart, addToCart, updateCartItem, removeCartItem } from '@/services/api';
 import { toast } from 'sonner';
 import { Cart } from '@/types/cart';
 
@@ -25,6 +25,70 @@ export const useAddToCartMutation = () => {
     },
     onError: () => {
       toast.error('Failed to add to cart');
+    },
+  });
+};
+
+export const useUpdateCartItemMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId, quantity }: { productId: string; quantity: number }) =>
+      updateCartItem({ customerId: CUSTOMER_ID, productId, quantity }),
+    onMutate: async ({ productId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: ['cart', CUSTOMER_ID] });
+      const previousCart = queryClient.getQueryData<Cart>(['cart', CUSTOMER_ID]);
+
+      if (previousCart) {
+        queryClient.setQueryData<Cart>(['cart', CUSTOMER_ID], {
+          ...previousCart,
+          items: previousCart.items.map((item) =>
+            item.productId === productId ? { ...item, quantity } : item
+          ),
+        });
+      }
+
+      return { previousCart };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart', CUSTOMER_ID], context.previousCart);
+      }
+      toast.error('Failed to update quantity');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', CUSTOMER_ID] });
+    },
+  });
+};
+
+export const useRemoveCartItemMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId }: { productId: string }) =>
+      removeCartItem({ customerId: CUSTOMER_ID, productId }),
+    onMutate: async ({ productId }) => {
+      await queryClient.cancelQueries({ queryKey: ['cart', CUSTOMER_ID] });
+      const previousCart = queryClient.getQueryData<Cart>(['cart', CUSTOMER_ID]);
+
+      if (previousCart) {
+        queryClient.setQueryData<Cart>(['cart', CUSTOMER_ID], {
+          ...previousCart,
+          items: previousCart.items.filter((item) => item.productId !== productId),
+        });
+      }
+
+      return { previousCart };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart', CUSTOMER_ID], context.previousCart);
+      }
+      toast.error('Failed to remove item');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', CUSTOMER_ID] });
     },
   });
 };
