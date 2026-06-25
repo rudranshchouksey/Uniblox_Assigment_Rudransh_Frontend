@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Package2, ShoppingCart } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -5,9 +7,12 @@ import { MobileNav } from './MobileNav';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useCartQuery } from '@/features/cart/useCart';
 
 export function Navbar() {
-  const cartItemCount = 0;
+  const { data: cart } = useCartQuery();
+  
+  const cartItemCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
