@@ -41,4 +41,9 @@ export const removeCartItem = async (data: { customerId: string; productId: stri
   return response.data.data;
 };
 
+export const processCheckout = async (data: { customerId: string; discountCode?: string }) => {
+  const response = await api.post('/checkout', data);
+  return response.data.data;
+};
+
 export default api;
