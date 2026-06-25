@@ -16,7 +16,7 @@ export const useCheckoutMutation = () => {
       toast.success('Order placed successfully!');
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.error || 'Checkout failed. Please try again.';
+      const message = error?.response?.data?.message || 'Checkout failed. Please try again.';
       toast.error(message);
     },
   });

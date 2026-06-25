@@ -12,27 +12,27 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <LoadingState 
-        title="Products" 
-        description="Browse our latest collection of premium items." 
-        type="grid" 
+      <LoadingState
+        title="Products"
+        description="Browse our latest collection of premium items."
+        type="grid"
       />
     );
   }
 
   if (isError) {
     return (
-      <ErrorState 
-        title="Products" 
-        message="Failed to load products. Please try again later." 
+      <ErrorState
+        title="Products"
+        message="Failed to load products. Please try again later."
       />
     );
   }
 
   if (!products || products.length === 0) {
     return (
-      <EmptyState 
-        title="No Products" 
+      <EmptyState
+        title="No Products"
         description="There are currently no products available at the moment."
         icon={<PackageX className="h-12 w-12 text-muted-foreground" />}
       />
@@ -47,7 +47,7 @@ export default function Home() {
           Browse our latest collection of premium items.
         </p>
       </div>
-      
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
