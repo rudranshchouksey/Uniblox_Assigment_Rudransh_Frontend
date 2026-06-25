@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useCartQuery } from '@/features/cart/useCart';
 import { useProductsQuery } from '@/features/products/useProducts';
 import { CartItemRow } from '@/features/cart/CartItemRow';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingState } from '@/components/shared/LoadingState';
+import { ErrorState } from '@/components/shared/ErrorState';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { buttonVariants } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,31 +20,20 @@ export default function CartPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Your Cart</h1>
-          <p className="text-muted-foreground mt-2">Loading your items...</p>
-        </div>
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col gap-4">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <div className="flex justify-end mt-4">
-            <Skeleton className="h-10 w-48" />
-          </div>
-        </div>
-      </div>
+      <LoadingState 
+        title="Your Cart" 
+        description="Loading your items..." 
+        type="list" 
+      />
     );
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
-        <h1 className="text-3xl font-bold tracking-tight">Your Cart</h1>
-        <div className="rounded-xl border border-destructive bg-destructive/10 p-6 text-center text-destructive">
-          Failed to load cart. Please try again later.
-        </div>
-      </div>
+      <ErrorState 
+        title="Your Cart" 
+        message="Failed to load cart. Please try again later." 
+      />
     );
   }
 
@@ -50,21 +41,16 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
-        <h1 className="text-3xl font-bold tracking-tight">Your Cart</h1>
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-12 flex flex-col items-center justify-center text-center gap-4">
-          <div className="bg-muted p-4 rounded-full">
-            <ShoppingCart className="h-12 w-12 text-muted-foreground" />
-          </div>
-          <h2 className="text-xl font-semibold">Your cart is empty</h2>
-          <p className="text-muted-foreground max-w-md">
-            Looks like you haven't added anything to your cart yet. Let's get you started!
-          </p>
+      <EmptyState 
+        title="Your cart is empty" 
+        description="Looks like you haven't added anything to your cart yet. Let's get you started!"
+        icon={<ShoppingCart className="h-12 w-12 text-muted-foreground" />}
+        action={
           <Link href="/" className={cn(buttonVariants(), "mt-4")}>
             Continue Shopping
           </Link>
-        </div>
-      </div>
+        }
+      />
     );
   }
 

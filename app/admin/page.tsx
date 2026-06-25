@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useAdminStatsQuery, useGenerateCouponMutation } from '@/features/admin/useAdmin';
 import { DiscountCode } from '@/types/admin';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { StatsCard } from '@/components/shared/StatsCard';
+import { LoadingState } from '@/components/shared/LoadingState';
+import { ErrorState } from '@/components/shared/ErrorState';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -52,24 +53,19 @@ export default function AdminPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-8 w-full">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}
-        </div>
-        <Skeleton className="h-96 rounded-xl w-full mt-4" />
-      </div>
+      <LoadingState 
+        title="Admin Dashboard" 
+        type="cards" 
+      />
     );
   }
 
   if (isError || !stats) {
     return (
-      <div className="flex flex-col gap-6 w-full text-center py-20">
-        <h1 className="text-3xl font-bold tracking-tight text-destructive mb-4">Error loading dashboard</h1>
-        <p className="text-muted-foreground">Unable to fetch administrative statistics at this time.</p>
-      </div>
+      <ErrorState 
+        title="Error loading dashboard" 
+        message="Unable to fetch administrative statistics at this time." 
+      />
     );
   }
 
@@ -92,46 +88,30 @@ export default function AdminPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            <p className="text-xs text-muted-foreground">Successfully processed</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Gross income across all orders</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Items Purchased</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.itemsPurchased}</div>
-            <p className="text-xs text-muted-foreground">Individual products sold</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Discount Given</CardTitle>
-            <Tag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalDiscountGiven.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Savings passed to customers</p>
-          </CardContent>
-        </Card>
+        <StatsCard 
+          title="Total Orders"
+          value={stats.totalOrders}
+          subtitle="Successfully processed"
+          icon={<CreditCard className="h-4 w-4 text-muted-foreground" />}
+        />
+        <StatsCard 
+          title="Total Revenue"
+          value={`$${stats.totalRevenue.toFixed(2)}`}
+          subtitle="Gross income across all orders"
+          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+        />
+        <StatsCard 
+          title="Items Purchased"
+          value={stats.itemsPurchased}
+          subtitle="Individual products sold"
+          icon={<Package className="h-4 w-4 text-muted-foreground" />}
+        />
+        <StatsCard 
+          title="Total Discount Given"
+          value={`$${stats.totalDiscountGiven.toFixed(2)}`}
+          subtitle="Savings passed to customers"
+          icon={<Tag className="h-4 w-4 text-muted-foreground" />}
+        />
       </div>
 
       <div className="flex flex-col gap-4 mt-4">

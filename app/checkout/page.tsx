@@ -8,12 +8,15 @@ import * as z from 'zod';
 import { useCartQuery } from '@/features/cart/useCart';
 import { useProductsQuery } from '@/features/products/useProducts';
 import { useCheckoutMutation } from '@/features/checkout/useCheckout';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingState } from '@/components/shared/LoadingState';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { OrderSummary } from '@/components/shared/OrderSummary';
+import { CouponInput } from '@/components/shared/CouponInput';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Package2, ShieldCheck, CreditCard } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Order } from '@/types/order';
 
@@ -128,27 +131,20 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Checkout</h1>
-        </div>
-        <div className="grid md:grid-cols-[1.5fr_1fr] gap-8">
-          <Skeleton className="h-[400px] rounded-xl" />
-          <Skeleton className="h-[400px] rounded-xl" />
-        </div>
-      </div>
+      <LoadingState 
+        title="Checkout" 
+        type="checkout" 
+      />
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col gap-6 max-w-xl mx-auto w-full text-center py-20">
-        <h1 className="text-3xl font-bold tracking-tight mb-4">Checkout</h1>
-        <p className="text-muted-foreground">Your cart is empty. You cannot proceed to checkout.</p>
-        <div className="mt-4">
-          <Link href="/" className={buttonVariants()}>Return to Shop</Link>
-        </div>
-      </div>
+      <EmptyState 
+        title="Checkout" 
+        description="Your cart is empty. You cannot proceed to checkout."
+        action={<Link href="/" className={buttonVariants()}>Return to Shop</Link>}
+      />
     );
   }
 
@@ -185,19 +181,13 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="discountCode">Discount Code (Optional)</Label>
-                <Input
-                  id="discountCode"
-                  placeholder="e.g. SAVE10"
-                  {...form.register('discountCode')}
-                />
-                {form.formState.errors.discountCode && (
-                  <p className="text-sm font-medium text-destructive">
-                    {form.formState.errors.discountCode.message}
-                  </p>
-                )}
-              </div>
+              <CouponInput
+                id="discountCode"
+                label="Discount Code (Optional)"
+                placeholder="e.g. SAVE10"
+                registration={form.register('discountCode')}
+                error={form.formState.errors.discountCode?.message}
+              />
 
               <Button 
                 type="submit" 
@@ -217,38 +207,14 @@ export default function CheckoutPage() {
         </div>
 
         {/* RIGHT COLUMN: ORDER SUMMARY */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden sticky top-24">
-          <div className="bg-muted/50 p-6 border-b flex items-center gap-2">
-            <Package2 className="w-5 h-5" />
-            <h2 className="font-semibold text-lg">Order Summary</h2>
-          </div>
-          
-          <div className="p-6 flex flex-col gap-4">
-            <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-2">
-              {cartItemsWithProducts.map(({ item, product }) => (
-                <div key={item.productId} className="flex justify-between items-start text-sm">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{product.name}</span>
-                    <span className="text-muted-foreground text-xs">Qty: {item.quantity}</span>
-                  </div>
-                  <span className="font-medium">${(product.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
-
-            <Separator className="my-2" />
-
-            <div className="flex justify-between items-center font-bold text-lg">
-              <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
-            </div>
-            
-            <p className="text-xs text-muted-foreground">
-              Final totals including discounts will be calculated upon order submission.
-            </p>
-          </div>
-        </div>
-
+        <OrderSummary 
+          items={cartItemsWithProducts.map(({ item, product }) => ({
+            name: product.name,
+            quantity: item.quantity,
+            price: product.price
+          }))}
+          subtotal={subtotal}
+        />
       </div>
     </div>
   );

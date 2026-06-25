@@ -5,7 +5,7 @@ import { Package2, ShoppingCart } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { MobileNav } from './MobileNav';
 import { buttonVariants } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { CartBadge } from '@/components/shared/CartBadge';
 import { cn } from '@/lib/utils';
 import { useCartQuery } from '@/features/cart/useCart';
 
@@ -28,19 +28,13 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <ThemeToggle />
           <Link 
             href="/cart" 
             className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative")}
           >
             <ShoppingCart className="h-5 w-5" />
-            {cartItemCount > 0 && (
-              <Badge 
-                variant="destructive" 
-                className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs"
-              >
-                {cartItemCount}
-              </Badge>
-            )}
+            <CartBadge itemCount={cartItemCount} />
             <span className="sr-only">Cart</span>
           </Link>
         </div>

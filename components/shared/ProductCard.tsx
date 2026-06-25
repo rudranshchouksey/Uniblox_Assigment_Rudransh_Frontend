@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Minus, Plus } from 'lucide-react';
-import { useAddToCartMutation } from '../cart/useCart';
+import { useAddToCartMutation } from '@/features/cart/useCart';
 
 interface ProductCardProps {
   product: Product;

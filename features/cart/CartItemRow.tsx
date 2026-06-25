@@ -3,7 +3,8 @@
 import { CartItem } from '@/types/cart';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { QuantitySelector } from '@/components/shared/QuantitySelector';
 import { useUpdateCartItemMutation, useRemoveCartItemMutation } from './useCart';
 
 interface CartItemRowProps {
@@ -45,29 +46,12 @@ export function CartItemRow({ item, product }: CartItemRowProps) {
       </div>
 
       <div className="flex items-center">
-        <div className="flex items-center rounded-md border border-input w-fit">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="h-8 w-8 rounded-none border-r border-input"
-            onClick={handleDecrease}
-            disabled={item.quantity <= 1}
-          >
-            <Minus className="h-3 w-3" />
-          </Button>
-          <span className="w-8 text-center text-sm font-medium">
-            {item.quantity}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="h-8 w-8 rounded-none border-l border-input"
-            onClick={handleIncrease}
-            disabled={item.quantity >= product.stock}
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-        </div>
+        <QuantitySelector 
+          quantity={item.quantity}
+          onDecrease={handleDecrease}
+          onIncrease={handleIncrease}
+          max={product.stock}
+        />
       </div>
 
       <div className="flex items-center justify-between md:justify-end gap-6">
