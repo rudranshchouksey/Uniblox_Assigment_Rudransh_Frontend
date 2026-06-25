@@ -14,8 +14,8 @@ import { Label } from '@/components/ui/label';
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
-  price: z.coerce.number().positive('Price must be greater than zero'),
-  stock: z.coerce.number().int().nonnegative('Stock cannot be negative'),
+  price: z.number({ invalid_type_error: 'Price must be a valid number' }).positive('Price must be greater than zero'),
+  stock: z.number({ invalid_type_error: 'Stock must be a valid number' }).int().nonnegative('Stock cannot be negative'),
   category: z.string().optional(),
   image: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
@@ -89,12 +89,12 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="price">Price ($)</Label>
-              <Input id="price" type="number" step="0.01" {...register('price')} className="bg-muted/50" />
+              <Input id="price" type="number" step="0.01" {...register('price', { valueAsNumber: true })} className="bg-muted/50" />
               {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="stock">Stock</Label>
-              <Input id="stock" type="number" {...register('stock')} className="bg-muted/50" />
+              <Input id="stock" type="number" {...register('stock', { valueAsNumber: true })} className="bg-muted/50" />
               {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
             </div>
           </div>
